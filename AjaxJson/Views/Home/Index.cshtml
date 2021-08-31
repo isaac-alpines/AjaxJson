@@ -1,0 +1,84 @@
+﻿
+@{
+    ViewBag.Title = "Home";
+}
+
+<div class="row">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="text" id="txtData" placeholder="Enter new list name..." class="form-control" />
+        </div>
+        <div class="col-md-4 d-block">
+            <button type="button" id="btnSend" class="btn btn-success">Send Data</button>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <hr />
+        <button type="button" id="btnLoad" class="btn btn-success">Load Json Data</button>
+    </div>
+    <div class="col-md-12">
+        <hr />
+        <div id="loading" class="alert alert-warning">Loading data... Please wait...</div>
+    </div>
+    <div class="col-md-12">
+        <ul class="list-group" id="list"></ul>
+    </div>
+</div>
+
+<script>
+    $(function () {
+
+        $("#btnLoad").click(function () {
+
+            $.ajax({
+                method: "GET",
+                url: "/Home/GetData",
+                beforeSend: function () {
+                    $("#loading").show(300);
+                }
+            }).done(function (resp) {
+
+                console.log(resp);
+
+                for (var i in resp) {
+                    $("#list").append($("<li class='list-group-item'></li>").html(resp[i]));
+                }
+
+            }).fail(function (response) {
+                alert(response);
+            }).always(function () {
+                $("#loading").hide(300);
+            });
+
+        });
+
+        $("#btnSend").click(function () {
+
+            $("#list").empty();
+
+            var txtData = $("#txtData").val();
+
+            $.ajax({
+                method: "POST",
+                url: "/Home/SetData",
+                data: { listItem: txtData },
+                beforeSend: function () {
+                    $("#loading").show(300);
+                }
+            }).done(function (resp) {
+                console.log(resp);
+
+                for (var i in resp) {
+                    $("#list").append($("<li class='list-group-item'></li>").html(resp[i]));
+                }
+            }).fail(function (response) {
+                alert(response);
+            }).always(function () {
+                $("#loading").hide(300);
+            });
+
+        });
+
+    });
+</script>
+
